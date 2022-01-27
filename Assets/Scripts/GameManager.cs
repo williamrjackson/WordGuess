@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System;
 
 public enum LetterState {Inactive, Active, Completed, Matched, PositionMatched }
 public class GameManager : MonoBehaviour
@@ -13,6 +14,7 @@ public class GameManager : MonoBehaviour
     public Color MatchedLetterColor;
     public Color PositionMatchedLetterColor;
     public string TargetWord = "fight";
+    private int _streak;
     public static GameManager Instance;
     void Awake ()
     {
@@ -26,14 +28,67 @@ public class GameManager : MonoBehaviour
             Destroy(this);
         }
     }
-    // Start is called before the first frame update
-    void Start()
+    private bool _dailyWordmode = true;
+    public bool DailyWordMode
     {
-        PickRandomWord();
+        get
+        {
+            return _dailyWordmode;
+        }
+        set
+        {
+            Debug.Log("DailyWordMode = " + value.ToString());
+            DonePanel.Instance.Hide();
+            _dailyWordmode = value;
+            SetWord();
+        }
+    }
+    private void Start()
+    {
+        SetWord();
+    }
+    void SetWord()
+    {
+        if (DailyWordMode)
+        {
+            GetWordByDay();
+            _streak = PlayerPrefs.GetInt("consecutiveWins", 0);
+            if (PlayerPrefs.GetString("lastWord", "") == TargetWord)
+            {
+                GameOver(_streak > 0, false);
+            }
+        }
+        else
+        {
+            PickRandomWord();
+        } 
+    }
+    void GetWordByDay()
+    {
+        TargetWord = Wrj.WordList.WordOfTheDay();
+        // Debug.Log(TargetWord);
     }
     void PickRandomWord()
     {
         TargetWord = Wrj.WordList.RandomWord();
+    }
+
+    public void GameOver(bool win, bool addToStreak)
+    {
+        PlayerPrefs.SetString("lastWord", TargetWord);
+        if (addToStreak)
+        {
+            if (win)
+            {
+                _streak++;
+            }
+            else
+            {
+                _streak = 0;
+            }
+        }
+        PlayerPrefs.SetInt("consecutiveWins", _streak);
+        DonePanel.Instance.Show(win, _streak);
     }
 
     public void WordNotFound()
@@ -48,5 +103,7 @@ public class GameManager : MonoBehaviour
     {
         notFoundText.alpha = val;
     }   
+
+    
 
 }

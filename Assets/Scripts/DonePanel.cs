@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,7 +7,12 @@ public class DonePanel : MonoBehaviour
     CanvasGroup canvasGroup;
     [SerializeField]
     TMPro.TextMeshProUGUI text;
+    [SerializeField]
+    Button reloadButton;
+    [SerializeField]
+    TMPro.TextMeshProUGUI countText;
     public bool IsDone => canvasGroup.interactable;
+    private Wrj.Utils.MapToCurve.Manipulation canvasFadeRoutine;
     public static DonePanel Instance;
     void Awake ()
     {
@@ -24,21 +27,35 @@ public class DonePanel : MonoBehaviour
         }
         canvasGroup.interactable = false;
         canvasGroup.alpha = 0f;
+        canvasGroup.blocksRaycasts = false;
     }
-    // Start is called before the first frame update
-    public void Show(bool win)
+
+    public void Show(bool win, int currentStreak)
     {
+        countText.gameObject.SetActive(GameManager.Instance.DailyWordMode);
+        reloadButton.gameObject.SetActive(!GameManager.Instance.DailyWordMode);
+
         if (win)
         {
-            text.SetText("Success!");
+            text.SetText($"Success!\n\nStreak: {currentStreak}\n\nNext Word in:\n");
         }
         else
         {
-            text.SetText($"Word:\n{GameManager.Instance.TargetWord.ToUpper()}");
+            text.SetText($"Failed\n\nStreak: {currentStreak}\n\nNext Word in:\n");
         }
         canvasGroup.interactable = true;
         canvasGroup.blocksRaycasts = true;
-        Wrj.Utils.MapToCurve.Linear.ManipulateFloat(SetAlpha, 0f, 1f, 1f);
+        canvasFadeRoutine = Wrj.Utils.MapToCurve.Linear.ManipulateFloat(SetAlpha, 0f, 1f, 1f);
+    }
+    public void Hide()
+    {
+        if (canvasFadeRoutine.coroutine != null)
+        {
+            canvasFadeRoutine.Stop();
+        }
+        canvasGroup.interactable = false;
+        canvasGroup.alpha = 0f;
+        canvasGroup.blocksRaycasts = false;
     }
 
     void SetAlpha(float val)

@@ -21,7 +21,7 @@ public class WordRowManager : MonoBehaviour
 
     private void EnterRecd()
     {
-        if (DonePanel.Instance.IsDone)
+        if (DonePanel.Instance.IsDone && !GameManager.Instance.DailyWordMode)
         {
             ReloadScene.Instance.Reload();
         }
@@ -36,13 +36,13 @@ public class WordRowManager : MonoBehaviour
         else if (result == WordRow.WordValidationResults.Correct)
         {
             Debug.Log("Match");
-            DonePanel.Instance.Show(true);
+            GameManager.Instance.GameOver(true, true);
         }
         else if (wordRows[_currentRowIndex].Word.Length == 5)
         {
             if (_currentRowIndex == wordRows.Length - 1)
             {
-                DonePanel.Instance.Show(false);
+                GameManager.Instance.GameOver(false, true);
             }
             else
             {

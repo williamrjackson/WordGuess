@@ -8,8 +8,8 @@ namespace Wrj
 {
     public class WordList : MonoBehaviour
     {
-        private HashSet<string> wordSet; 
-        private HashSet<string> commonSet; 
+        private HashSet<string> wordSet;
+        private HashSet<string> commonSet;
 
         private static WordList _instance;
         public static WordList Instance
@@ -52,7 +52,16 @@ namespace Wrj
             List<string> commonList = Instance.commonSet.ToList();
             return commonList[UnityEngine.Random.Range(0, Instance.commonSet.Count)];
         }
-
+        public static string WordOfTheDay()
+        {
+            List<string> words = Instance.commonSet.ToList();
+            DateTime today = DateTime.Now.ToUniversalTime().Date;
+            Int64 todayInt = today.ToBinary();
+            Int64 wordIndex = todayInt % (Int64)words.Count;
+            int nWordIndex = Mathf.Abs((int)wordIndex);
+            string wordOtD = words[(int)nWordIndex];
+            return wordOtD;
+        }
         public static List<string> GetPossibleWords(string chars, int minLength = 3)
         {
             chars = chars.ToLower();
