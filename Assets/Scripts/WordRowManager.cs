@@ -6,12 +6,24 @@ public class WordRowManager : MonoBehaviour
     WordRow[] wordRows;
     private int _currentRowIndex = 0;
 
+    public static WordRowManager Instance;
+    void Awake ()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Debug.LogWarning("Multiple WordRowManager's instantiated. Component removed from " + gameObject.name + ". Instance already found on " + Instance.gameObject.name + "!");
+            Destroy(this);
+        }
+    }
     void Start()
     {
         Keyboard.Instance.OnLetter += LetterRecd;
         Keyboard.Instance.OnEnter += EnterRecd;
         Keyboard.Instance.OnBackspace += BackspaceRecd;
-        wordRows[_currentRowIndex].SetRowActive();
     }
 
     private void BackspaceRecd()
@@ -55,5 +67,25 @@ public class WordRowManager : MonoBehaviour
     private void LetterRecd(char letter)
     {
         wordRows[_currentRowIndex].AddLetter(letter);
+    }
+    public static void ActivateDefaultRow()
+    {
+        Instance.wordRows[Instance._currentRowIndex].SetRowActive();
+    }
+    public static void SaveWords()
+    {
+        for (int i = 0; i < Instance.wordRows.Length; i++)
+        {
+            PlayerPrefs.SetString($"word{i}", Instance.wordRows[i].Word);
+        }
+    }
+    public static void LoadSavedWords()
+    {
+        for (int i = 0; i < Instance.wordRows.Length; i++)
+        {
+            string word = PlayerPrefs.GetString($"word{i}", "");
+            Instance.wordRows[i].Word = word;
+            Instance.wordRows[i].ValidateWord();
+        }
     }
 }

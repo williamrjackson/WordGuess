@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -55,7 +54,7 @@ namespace Wrj
         public static string WordOfTheDay()
         {
             List<string> words = Instance.commonSet.ToList();
-            DateTime today = DateTime.Now.ToUniversalTime().Date;
+            DateTime today = DateTime.UtcNow.Date;
             Int64 todayInt = today.ToBinary();
             Int64 wordIndex = todayInt % (Int64)words.Count;
             int nWordIndex = Mathf.Abs((int)wordIndex);

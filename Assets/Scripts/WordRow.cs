@@ -26,6 +26,19 @@ public class WordRow : MonoBehaviour
             }
             return result.ToUpper();
         }
+        set
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                value = new string(' ', letterBoxes.Length);
+            }
+            Debug.Log("Loading Word: " + value);
+            for (int i = 0; i < value.Length; i++)
+            {
+                value = value.ToUpper();
+                letterBoxes[i].SetLetter(value[i]);
+            }
+        }
     }
     public void SetRowActive()
     {

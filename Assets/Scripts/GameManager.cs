@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using System;
 
 public enum LetterState {Inactive, Active, Completed, Matched, PositionMatched }
 public class GameManager : MonoBehaviour
@@ -57,10 +54,15 @@ public class GameManager : MonoBehaviour
             {
                 GameOver(_streak > 0, false);
             }
+            else
+            {
+                WordRowManager.ActivateDefaultRow();
+            }
         }
         else
         {
             PickRandomWord();
+            WordRowManager.ActivateDefaultRow();
         } 
     }
     void GetWordByDay()
@@ -76,8 +78,10 @@ public class GameManager : MonoBehaviour
     public void GameOver(bool win, bool addToStreak)
     {
         PlayerPrefs.SetString("lastWord", TargetWord);
+      
         if (addToStreak)
         {
+            WordRowManager.SaveWords();
             if (win)
             {
                 _streak++;
@@ -86,6 +90,10 @@ public class GameManager : MonoBehaviour
             {
                 _streak = 0;
             }
+        }
+        else
+        {
+            WordRowManager.LoadSavedWords();
         }
         PlayerPrefs.SetInt("consecutiveWins", _streak);
         DonePanel.Instance.Show(win, _streak);

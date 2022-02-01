@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
@@ -18,8 +16,8 @@ public class NextWordCountdown : MonoBehaviour
     {
         if (_canvasGroup.alpha > 0f)
         {
-            System.DateTime tomorrow = System.DateTime.Today.ToUniversalTime().AddDays(1);
-            System.TimeSpan until = tomorrow.Subtract(System.DateTime.Now.ToUniversalTime());
+            System.DateTime tomorrow = System.DateTime.UtcNow.Date.AddDays(1);
+            System.TimeSpan until = tomorrow.Subtract(System.DateTime.UtcNow);
             _timerText.SetText(until.ToString(@"hh\:mm\:ss"));
         }
     }

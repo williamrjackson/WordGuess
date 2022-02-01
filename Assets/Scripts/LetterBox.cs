@@ -49,7 +49,7 @@ public class LetterBox : MonoBehaviour
     {
         if (!_stateInitialized) State = _state;
     }
-    internal void SetLetter(char letter)
+    public void SetLetter(char letter)
     {
         text.SetText(letter.ToString());
     }

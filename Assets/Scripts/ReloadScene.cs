@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using Wrj;
 public class ReloadScene : MonoBehaviour
 {
     public static ReloadScene Instance;
